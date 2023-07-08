@@ -1,7 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 
-
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -35,17 +34,17 @@ const newUser = async (user) => {
 
     await User.findOne({ username: user.username }).then(async (doc) => {
         if (!doc) {
-            let user = new User({ username: username, password: password, chat: [] });
-            await user.save().then((x) => {
+            let us = new User({ username: user.username, password: user.password, chat: [] });
+            await us.save().then((x) => {
                 res = { status: "success", payload: user.username };
             }).catch((err) => {
-                res = { status: "error", payload: { title: "Error on User.save Username: " + user.username, err: err } };
+                res = { status: "error", payload: { title: "Error on User.save Username: " + user.username, err: err.message } };
             });
         } else {
             res = { status: "error", payload: { title: "Username name already exists. Username: " + user.username, err: "" } };
         }
     }).catch(err => {
-        res = { status: "error", payload: { title: "Error on User.findOne. Username: " + user.username, err: err } };
+        res = { status: "error", payload: { title: "Error on User.findOne. Username: " + user.username, err: err.message } };
     });
 
     return res;
@@ -63,16 +62,16 @@ const sendMessage = async (to, message) => {
                 await Chat.update(to, { $push: { messages: msg.id } }).then((x) => {
                     res = { status: "success", payload: msg.id };
                 }).catch((err) => {
-                    res = { status: "error", payload: { title: "Error on Chat.update Chat: " + chat, err: err } };
+                    res = { status: "error", payload: { title: "Error on Chat.update Chat: " + chat, err: err.message } };
                 });
             }).catch((err) => {
-                res = { status: "error", payload: { title: "Error on Message.save message: " + message, err: err } };
+                res = { status: "error", payload: { title: "Error on Message.save message: " + message, err: err.message } };
             });
         } else {
             res = { status: "error", payload: { title: "Chat does not exist. Chat: " + to, err: "" } };
         }
     }).catch((err) => {
-        res = { status: "error", payload: { title: "Error on Chat.findOne. Chat: " + to, err: err } };
+        res = { status: "error", payload: { title: "Error on Chat.findOne. Chat: " + to, err: err.message } };
     });
 
     return res;
@@ -84,7 +83,7 @@ const getUser = async (username) => {
     await User.findOne({ username: username }).then((us) => {
         res = { status: "success", payload: us };
     }).catch((err) => {
-        res = { status: "error", payload: { title: "Error User.findOne. User: " + username, err: err } };
+        res = { status: "error", payload: { title: "Error User.findOne. User: " + username, err: err.message } };
     });
 
     return res;
@@ -96,7 +95,7 @@ const getChat = async (chat) => {
     await Chat.findOne({ name: chat }).then((cht) => {
         res = { status: "success", payload: cht };
     }).catch((err) => {
-        res = { status: "error", payload: { title: "Error Chat.findOne. Chat: " + chat, err: err } };
+        res = { status: "error", payload: { title: "Error Chat.findOne. Chat: " + chat, err: err.message } };
     });
 
     return res;
@@ -105,7 +104,7 @@ const getChat = async (chat) => {
 module.exports = {
     connect: connect,
     newUser: newUser,
-    getuser: getUser,
+    getUser: getUser,
     getChat: getChat,
     sendMessage: sendMessage
 }
