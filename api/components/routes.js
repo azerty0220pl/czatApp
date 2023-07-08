@@ -9,7 +9,7 @@ const ensureAuthenticated = (req, res, next) => {
 };
 
 const routes = (app, newUser, getChat) => {
-    app.route('/login').post(passport.authenticate('local', { failureRedirect: "/failedLogin", session: true }), (req, res) => {
+    app.route('/login').post(passport.authenticate('local', { failureRedirect: "/failed-login", session: true }), (req, res) => {
         res.json({ "status": "success", "payload": req.user });
     }, (err, req, res) => {
         res.json({ "status": "error", "payload": err.message });
@@ -31,7 +31,7 @@ const routes = (app, newUser, getChat) => {
         });
     });
 
-    app.route("/failedLogin").get((req, res) => {
+    app.route("/failed-login").get((req, res) => {
         res.json({ "status": "error", "payload": "Failed authentication" });
     });
 
